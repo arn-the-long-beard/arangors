@@ -85,7 +85,6 @@ async fn test_get_properties() {
     let coll = database.create_collection(collection_name).await;
     assert_eq!(coll.is_err(), false);
 
-
     let coll = database.collection(collection_name).await.unwrap();
     assert_eq!(coll.is_err(), false);
 
