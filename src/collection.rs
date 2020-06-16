@@ -7,9 +7,11 @@ use serde::{
 };
 use url::Url;
 
-use crate::client::ClientExt;
+use crate::client::{ClientExt};
 
 use super::{Database, Document};
+use crate::ClientError;
+use crate::response::serialize_response;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -109,8 +111,13 @@ impl<'a, C: ClientExt> Collection<'a, C> {
 
     /// Fetch the properties of collection
     #[maybe_async]
-    pub async fn properties(&self) {
-        unimplemented!()
+    pub async fn properties(&self) -> Result<CollectionDetails, ClientError> {
+        let url = self
+            .base_url
+            .join(&format!("_api/collection/{}/properties", &self.name))
+            .unwrap();
+        let resp: CollectionDetails = serialize_response(self.session.get(url, "").await?.text())?;
+        Ok(resp)
     }
 
     /// Counts the documents in this collection
@@ -298,8 +305,8 @@ pub enum CollectionStatus {
 
 impl<'de> Deserialize<'de> for CollectionStatus {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
+        where
+            D: Deserializer<'de>,
     {
         let value = u8::deserialize(deserializer)?;
         match value {
@@ -325,8 +332,8 @@ pub enum CollectionType {
 
 impl<'de> Deserialize<'de> for CollectionType {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
+        where
+            D: Deserializer<'de>,
     {
         let value = u8::deserialize(deserializer)?;
         match value {
