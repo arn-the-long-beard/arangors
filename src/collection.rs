@@ -105,11 +105,18 @@ impl<'a, C: ClientExt> Collection<'a, C> {
         Arc::clone(&self.session)
     }
 
+    /// Truncate current collection.
+    ///
+    /// # Note
+    /// this function would make a request to arango server.
     pub fn truncate(&self) {
         unimplemented!()
     }
 
     /// Fetch the properties of collection
+    ///
+    /// # Note
+    /// this function would make a request to arango server.
     #[maybe_async]
     pub async fn properties(&self) -> Result<CollectionDetails, ClientError> {
         let url = self
@@ -121,6 +128,9 @@ impl<'a, C: ClientExt> Collection<'a, C> {
     }
 
     /// Counts the documents in this collection
+    ///
+    /// # Note
+    /// this function would make a request to arango server.
     #[maybe_async]
     pub async fn document_count(&self) {
         unimplemented!()
@@ -150,6 +160,9 @@ impl<'a, C: ClientExt> Collection<'a, C> {
     /// collection is normally slightly higher than the sum of the reported
     /// fileSize values. Still the sum of the fileSize values can still be used
     /// as a lower bound approximation of the disk usage.
+    ///
+    /// # Note
+    /// this function would make a request to arango server.
     #[maybe_async]
     pub async fn statistics(&self) {
         unimplemented!()
@@ -160,6 +173,9 @@ impl<'a, C: ClientExt> Collection<'a, C> {
     /// The revision id is a server-generated string that clients can use to
     /// check whether data in a collection has changed since the last revision
     /// check.
+    ///
+    /// # Note
+    /// this function would make a request to arango server.
     #[maybe_async]
     pub async fn revision_id(&self) {
         unimplemented!()
@@ -184,19 +200,29 @@ impl<'a, C: ClientExt> Collection<'a, C> {
     // By providing the optional query parameter withData with a value of true, the
     // user-defined document attributes will be included in the calculation too.
     // Note: Including user-defined attributes will make the checksumming slower.
+    ///
+    /// # Note
+    /// this function would make a request to arango server.
     #[maybe_async]
     pub async fn checksum(&self) {
         unimplemented!()
     }
 
     /// Loads a collection into memory.
+    ///
+    /// # Note
+    /// this function would make a request to arango server.
     #[maybe_async]
     pub async fn load(&self) {
         unimplemented!()
     }
+
     /// Removes a collection from memory. This call does not delete any
     /// documents. You can use the collection afterwards; in which case it will
     /// be loaded into memory, again.
+    ///
+    /// # Note
+    /// this function would make a request to arango server.
     #[maybe_async]
     pub async fn unload(&self) {
         unimplemented!()
@@ -223,18 +249,27 @@ impl<'a, C: ClientExt> Collection<'a, C> {
     ///
     /// On sucess this function returns an object with attribute result set to
     /// true
+    ///
+    /// # Note
+    /// this function would make a request to arango server.
     #[maybe_async]
     pub async fn load_indexes(&self) {
         unimplemented!()
     }
 
     /// Changes the properties of a collection.
+    ///
+    /// # Note
+    /// this function would make a request to arango server.
     #[maybe_async]
     pub async fn change_properties(&self) {
         unimplemented!()
     }
 
     /// Renames the collection
+    ///
+    /// # Note
+    /// this function would make a request to arango server.
     #[maybe_async]
     pub async fn rename(&self) {
         unimplemented!()
@@ -249,6 +284,9 @@ impl<'a, C: ClientExt> Collection<'a, C> {
     ///
     /// Saving new data in the collection subsequently will create a new
     /// journal file automatically if there is no current journal.
+    ///
+    /// # Note
+    /// this function would make a request to arango server.
     #[maybe_async]
     pub async fn rotate_journal(&self) {
         unimplemented!()
@@ -257,24 +295,36 @@ impl<'a, C: ClientExt> Collection<'a, C> {
     /// Creates a new document from the document given in the body, unless
     /// there is already a document with the _key given. If no _key is given, a
     /// new unique _key is generated automatically.
+    ///
+    /// # Note
+    /// this function would make a request to arango server.
     #[maybe_async]
     pub async fn create_document<T>(&self, _doc: Document<T>) {
         unimplemented!()
     }
 
     /// Partially updates the document
+    ///
+    /// # Note
+    /// this function would make a request to arango server.
     #[maybe_async]
     pub async fn update_document<T>(&self, _doc: Document<T>) {
         unimplemented!()
     }
 
     /// Replaces the document
+    ///
+    /// # Note
+    /// this function would make a request to arango server.
     #[maybe_async]
     pub async fn replace_document<T>(&self, _doc: Document<T>) {
         unimplemented!()
     }
 
     /// Removes a document
+    ///
+    /// # Note
+    /// this function would make a request to arango server.
     #[maybe_async]
     pub async fn remove_document<T>(&self, _doc: Document<T>) {
         unimplemented!()
