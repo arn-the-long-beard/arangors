@@ -81,20 +81,16 @@ async fn test_get_properties() {
 
     let coll = database.drop_collection(collection_name).await;
     assert_eq!(coll.is_err(), true);
+
     let coll = database.create_collection(collection_name).await;
-    eprintln!("{:?}", coll);
     assert_eq!(coll.is_err(), false);
-    // let coll = database.collection(collection_name).await;
-    // assert_eq!(coll.is_err(), false);
+
 
     let coll = database.collection(collection_name).await.unwrap();
-    eprintln!("{:?}", coll);
+    assert_eq!(coll.is_err(), false);
+
     let properties = coll.properties().await;
-    // let e = properties.clone().unwrap_err();
-    eprintln!("{:?}", properties);
     assert_eq!(properties.is_err(), false);
-
-
 
     let coll = database.drop_collection(collection_name).await;
     assert_eq!(coll.is_err(), false);
