@@ -4,7 +4,7 @@
 use log::trace;
 use pretty_assertions::assert_eq;
 
-use arangors::Connection;
+use arangors::{Connection, ClientError};
 use common::{get_arangodb_host, get_normal_password, get_normal_user, test_setup};
 
 pub mod common;
@@ -38,7 +38,6 @@ sync = r#"any(feature="reqwest_blocking")"#,
 async = r#"any(feature="reqwest_async")"#,
 test = "tokio::test"
 )]
-
 #[cfg_attr(feature = "surf_async", maybe_async::must_be_async, async_std::test)]
 async fn test_create_and_drop_collection() {
     test_setup();
@@ -60,6 +59,7 @@ async fn test_create_and_drop_collection() {
     let coll = database.drop_collection(collection_name).await;
     assert_eq!(coll.is_err(), false);
 }
+
 #[maybe_async::test(
 sync = r#"any(feature="reqwest_blocking")"#,
 async = r#"any(feature="reqwest_async")"#,
@@ -82,11 +82,21 @@ async fn test_get_properties() {
     let coll = database.drop_collection(collection_name).await;
     assert_eq!(coll.is_err(), true);
     let coll = database.create_collection(collection_name).await;
+    eprintln!("{:?}", coll);
     assert_eq!(coll.is_err(), false);
-    let coll = database.collection(collection_name).await;
+    // let coll = database.collection(collection_name).await;
+    // assert_eq!(coll.is_err(), false);
+
+    let coll = database.collection(collection_name).await.unwrap();
+    eprintln!("{:?}", coll);
+    let properties = coll.properties().await;
+    // let e = properties.clone().unwrap_err();
+    eprintln!("{:?}", properties);
+    assert_eq!(properties.is_err(), false);
+
+
+
+    let coll = database.drop_collection(collection_name).await;
     assert_eq!(coll.is_err(), false);
 
-    let coll =  database.collection(collection_name).await.unwrap();
-    let properties = coll.properties().await;
-    assert_eq!(properties.is_err(), false);
 }
