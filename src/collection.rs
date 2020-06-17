@@ -40,6 +40,39 @@ pub struct CollectionDetails {
     pub wait_for_sync: bool,
     pub write_concern: u16,
 }
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ArangoIndex {
+    count: Option<u32>,
+    size: Option<u32>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Figures {
+    indexes: ArangoIndex
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CollectionStatistics {
+    /// The number of documents currently present in the collection.
+    pub count: Option<u32>,
+    /// metrics of the collection
+    pub figures: Figures,
+    pub cache_enabled: bool,
+    pub globally_unique_id: String,
+    pub id: String,
+    pub is_system: bool,
+    pub key_options: CollectionKeyOptions,
+    pub name: String,
+    pub object_id: String,
+    pub status: u16,
+    pub status_string: String,
+    pub r#type: u16,
+    pub wait_for_sync: bool,
+    pub write_concern: u16,
+}
 
 #[derive(Debug, Clone)]
 pub struct Collection<'a, C: ClientExt> {
@@ -126,11 +159,6 @@ impl<'a, C: ClientExt> Collection<'a, C> {
             .base_url
             .join(&format!("properties"))
             .unwrap();
-
-        eprintln!("{:?}", self.base_url);
-
-        eprintln!("{:?}", url);
-
         let resp: CollectionDetails = serialize_response(self.session.get(url, "").await?.text())?;
         Ok(resp)
     }
@@ -172,8 +200,13 @@ impl<'a, C: ClientExt> Collection<'a, C> {
     /// # Note
     /// this function would make a request to arango server.
     #[maybe_async]
-    pub async fn statistics(&self) {
-        unimplemented!()
+    pub async fn statistics(&self)  -> Result<CollectionStatistics, ClientError>{
+        let url = self
+            .base_url
+            .join(&format!("figures"))
+            .unwrap();
+        let resp: CollectionStatistics = serialize_response(self.session.get(url, "").await?.text())?;
+        Ok(resp)
     }
 
     /// Retrieve the collections revision id
@@ -192,22 +225,22 @@ impl<'a, C: ClientExt> Collection<'a, C> {
     ///
     /// Will calculate a checksum of the meta-data (keys and optionally
     /// revision ids) and optionally the document data in the collection.
-    // The checksum can be used to compare if two collections on different ArangoDB
-    // instances contain the same contents. The current revision of the collection
-    // is returned too so one can make sure the checksums are calculated for the
-    // same state of data.
-    //
-    // By default, the checksum will only be calculated on the _key system
-    // attribute of the documents contained in the collection. For edge
-    // collections, the system attributes _from and _to will also be included in
-    // the calculation.
-    //
-    // By setting the optional query parameter withRevisions to true, then revision
-    // ids (_rev system attributes) are included in the checksumming.
-    //
-    // By providing the optional query parameter withData with a value of true, the
-    // user-defined document attributes will be included in the calculation too.
-    // Note: Including user-defined attributes will make the checksumming slower.
+// The checksum can be used to compare if two collections on different ArangoDB
+// instances contain the same contents. The current revision of the collection
+// is returned too so one can make sure the checksums are calculated for the
+// same state of data.
+//
+// By default, the checksum will only be calculated on the _key system
+// attribute of the documents contained in the collection. For edge
+// collections, the system attributes _from and _to will also be included in
+// the calculation.
+//
+// By setting the optional query parameter withRevisions to true, then revision
+// ids (_rev system attributes) are included in the checksumming.
+//
+// By providing the optional query parameter withData with a value of true, the
+// user-defined document attributes will be included in the calculation too.
+// Note: Including user-defined attributes will make the checksumming slower.
     ///
     /// # Note
     /// this function would make a request to arango server.
