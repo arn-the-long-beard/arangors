@@ -85,10 +85,10 @@ async fn test_get_properties() {
     let coll = database.create_collection(collection_name).await;
     assert_eq!(coll.is_err(), false);
 
-    let coll = database.collection(collection_name).await.unwrap();
+    let coll = database.collection(collection_name).await;
     assert_eq!(coll.is_err(), false);
 
-    let properties = coll.properties().await;
+    let properties = coll.unwrap().properties().await;
     assert_eq!(properties.is_err(), false);
 
     let coll = database.drop_collection(collection_name).await;
